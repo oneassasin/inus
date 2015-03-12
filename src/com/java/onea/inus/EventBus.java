@@ -85,12 +85,10 @@ public final class EventBus {
             };
 
     public void register(Object object) {
-        if (object == null) {
+        if (object == null)
             throw new NullPointerException("Object for register must be not null!");
-        }
         mThreadEnforcer.enforce(this);
-        Map<Class<?>, Set<MethodProducer>> producersMap = mMethodFinder.findAllEventProducers(
-                object);
+        Map<Class<?>, Set<MethodProducer>> producersMap = mMethodFinder.findAllEventProducers(object);
         for (Map.Entry<Class<?>, Set<MethodProducer>> entry : producersMap.entrySet()) {
             Class<?> eventClass = entry.getKey();
             Set<MethodProducer> availableProducers = producersByEvent.get(eventClass);
@@ -100,8 +98,7 @@ public final class EventBus {
             }
             availableProducers.addAll(entry.getValue());
         }
-        Map<Class<?>, Set<MethodSubscriber>> subscribersMap = mMethodFinder.findAllEventSubscribers(
-                object);
+        Map<Class<?>, Set<MethodSubscriber>> subscribersMap = mMethodFinder.findAllEventSubscribers(object);
         for (Map.Entry<Class<?>, Set<MethodSubscriber>> entry : subscribersMap.entrySet()) {
             Class<?> eventClass = entry.getKey();
             Set<MethodSubscriber> availableSubscribers = subscribersByEvent.get(eventClass);
@@ -114,50 +111,42 @@ public final class EventBus {
     }
 
     public void unregister(Object object) {
-        if (object == null) {
+        if (object == null)
             throw new NullPointerException("Object for register must be not null!");
-        }
         mThreadEnforcer.enforce(this);
-        Map<Class<?>, Set<MethodProducer>> producersMap = mMethodFinder.findAllEventProducers(
-                object);
+        Map<Class<?>, Set<MethodProducer>> producersMap = mMethodFinder.findAllEventProducers(object);
         for (Map.Entry<Class<?>, Set<MethodProducer>> entry : producersMap.entrySet()) {
             Class<?> eventClass = entry.getKey();
             Set<MethodProducer> availableProducers = producersByEvent.get(eventClass);
             for (MethodProducer methodProducer : availableProducers) {
-                if (methodProducer.isProducerFrom(object)) {
+                if (methodProducer.isProducerFrom(object))
                     availableProducers.remove(methodProducer);
-                }
             }
         }
-        Map<Class<?>, Set<MethodSubscriber>> subscribersMap =
-                mMethodFinder.findAllEventSubscribers(object);
+        Map<Class<?>, Set<MethodSubscriber>> subscribersMap = mMethodFinder.findAllEventSubscribers(object);
         for (Map.Entry<Class<?>, Set<MethodSubscriber>> entry : subscribersMap.entrySet()) {
             Class<?> eventClass = entry.getKey();
             Set<MethodSubscriber> availableSubscribers = subscribersByEvent.get(eventClass);
             for (MethodSubscriber methodSubscriber : availableSubscribers) {
-                if (methodSubscriber.isSubscriberFrom(object)) {
+                if (methodSubscriber.isSubscriberFrom(object))
                     availableSubscribers.remove(methodSubscriber);
-                }
             }
         }
     }
 
     public void post(Object event) {
-        if (event == null) {
+        if (event == null)
             throw new NullPointerException("Object for register must be not null!");
-        }
         mThreadEnforcer.enforce(this);
         Set<MethodSubscriber> methodSubscribers = subscribersByEvent.get(event.getClass());
         if (methodSubscribers != null && methodSubscribers.size() != 0) {
-            for (MethodSubscriber methodSubscriber : methodSubscribers) {
+            for (MethodSubscriber methodSubscriber : methodSubscribers)
                 enqueueEvent(event, methodSubscriber);
-            }
         }
         Set<MethodSubscriber> blindEventSubscribers;
         if ((blindEventSubscribers = subscribersByEvent.get(BlindEvent.class)) != null) {
-            for (MethodSubscriber methodSubscriber: blindEventSubscribers) {
+            for (MethodSubscriber methodSubscriber: blindEventSubscribers)
                 enqueueEvent(event, methodSubscriber);
-            }
         }
         processEvents();
     }
@@ -174,9 +163,8 @@ public final class EventBus {
         try {
             while (true) {
                 EventWithSubscriber eventWithSubscriber = eventsToProcess.get().poll();
-                if (eventWithSubscriber == null) {
+                if (eventWithSubscriber == null)
                     break;
-                }
                 invokeSubscriberMethod(eventWithSubscriber.mEvent, eventWithSubscriber.mSubscriber);
             }
         } finally {

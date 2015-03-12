@@ -12,12 +12,10 @@ public final class MethodSubscriber {
     private final int hash;
 
     public MethodSubscriber(Object methodInstance, Method method) {
-        if (methodInstance == null) {
+        if (methodInstance == null)
             throw new NullPointerException(String.format("MethodInstance must be not null!"));
-        }
-        if (method == null) {
+        if (method == null)
             throw new NullPointerException(String.format("Method must be not null!"));
-        }
         mMethodInstance = methodInstance;
         mMethod = method;
         method.setAccessible(true);

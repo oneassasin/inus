@@ -11,12 +11,10 @@ public final class MethodProducer {
     private final int hash;
 
     public MethodProducer(Object methodInstance, Method method) {
-        if (methodInstance == null) {
+        if (methodInstance == null)
             throw new NullPointerException(String.format("MethodInstance must be not null!"));
-        }
-        if (method == null) {
+        if (method == null)
             throw new NullPointerException(String.format("Method must be not null!"));
-        }
         mMethodInstance = methodInstance;
         mMethod = method;
         int h = (mMethodInstance.hashCode() << 15) ^ 0xFFFFCD7D;
