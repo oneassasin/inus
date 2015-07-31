@@ -12,9 +12,9 @@ public final class MethodProducer {
 
     public MethodProducer(Object methodInstance, Method method) {
         if (methodInstance == null)
-            throw new NullPointerException(String.format("MethodInstance must be not null!"));
+            throw new NullPointerException("MethodInstance must be not null!");
         if (method == null)
-            throw new NullPointerException(String.format("Method must be not null!"));
+            throw new NullPointerException("Method must be not null!");
         mMethodInstance = methodInstance;
         mMethod = method;
         int h = (mMethodInstance.hashCode() << 15) ^ 0xFFFFCD7D;
@@ -40,8 +40,8 @@ public final class MethodProducer {
             return false;
         if (this == o)
             return true;
-        if (this.getClass() == o.getClass())
-            return true;
+        if (this.getClass() != o.getClass())
+            return false;
         final MethodProducer methodProducer = (MethodProducer) o;
         return methodProducer.mMethod == this.mMethod
                 && methodProducer.mMethodInstance == this.mMethodInstance;

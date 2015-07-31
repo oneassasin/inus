@@ -13,9 +13,9 @@ public final class MethodSubscriber {
 
     public MethodSubscriber(Object methodInstance, Method method) {
         if (methodInstance == null)
-            throw new NullPointerException(String.format("MethodInstance must be not null!"));
+            throw new NullPointerException("MethodInstance must be not null!");
         if (method == null)
-            throw new NullPointerException(String.format("Method must be not null!"));
+            throw new NullPointerException("Method must be not null!");
         mMethodInstance = methodInstance;
         mMethod = method;
         method.setAccessible(true);
@@ -55,8 +55,8 @@ public final class MethodSubscriber {
             return false;
         if (this == o)
             return true;
-        if (this.getClass() == o.getClass())
-            return true;
+        if (this.getClass() != o.getClass())
+            return false;
         final MethodSubscriber methodSubscriber = (MethodSubscriber) o;
         return methodSubscriber.mMethod == this.mMethod
                 && methodSubscriber.mMethodInstance == this.mMethodInstance;
@@ -66,6 +66,5 @@ public final class MethodSubscriber {
     public String toString() {
         return String.format("[MethodSubscriber |%S|%S|]", mMethod, hash);
     }
-
 
 }
