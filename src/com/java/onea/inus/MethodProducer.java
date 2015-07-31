@@ -40,8 +40,8 @@ public final class MethodProducer {
             return false;
         if (this == o)
             return true;
-        if (this.getClass() == o.getClass())
-            return true;
+        if (this.getClass() != o.getClass())
+            return false;
         final MethodProducer methodProducer = (MethodProducer) o;
         return methodProducer.mMethod == this.mMethod
                 && methodProducer.mMethodInstance == this.mMethodInstance;

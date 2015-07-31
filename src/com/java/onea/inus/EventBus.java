@@ -5,10 +5,7 @@ import com.java.onea.inus.event.BlindEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.*;
 
 public final class EventBus {
 
@@ -17,9 +14,8 @@ public final class EventBus {
     private static EventBus instance;
 
     public static EventBus getInstance() {
-        if (instance == null) {
+        if (instance == null)
             instance = new EventBus();
-        }
         return instance;
     }
 
@@ -93,20 +89,26 @@ public final class EventBus {
             Class<?> eventClass = entry.getKey();
             Set<MethodProducer> availableProducers = producersByEvent.get(eventClass);
             if (availableProducers == null) {
-                availableProducers = new CopyOnWriteArraySet<MethodProducer>();
-                producersByEvent.put(eventClass, availableProducers);
+                Set<MethodProducer> createProducersSet = new CopyOnWriteArraySet<MethodProducer>();
+                availableProducers = producersByEvent.putIfAbsent(eventClass, createProducersSet);
+                if (availableProducers == null)
+                    availableProducers = createProducersSet;
             }
-            availableProducers.addAll(entry.getValue());
+            for (MethodProducer foundedProducer : entry.getValue())
+                availableProducers.add(foundedProducer);
         }
         Map<Class<?>, Set<MethodSubscriber>> subscribersMap = mMethodFinder.findAllEventSubscribers(object);
         for (Map.Entry<Class<?>, Set<MethodSubscriber>> entry : subscribersMap.entrySet()) {
             Class<?> eventClass = entry.getKey();
             Set<MethodSubscriber> availableSubscribers = subscribersByEvent.get(eventClass);
             if (availableSubscribers == null) {
-                availableSubscribers = new CopyOnWriteArraySet<MethodSubscriber>();
-                subscribersByEvent.put(eventClass, availableSubscribers);
+                Set<MethodSubscriber> createSubscriberSet = new CopyOnWriteArraySet<MethodSubscriber>();
+                availableSubscribers = subscribersByEvent.putIfAbsent(eventClass, createSubscriberSet);
+                if (availableSubscribers == null)
+                    availableSubscribers = createSubscriberSet;
             }
-            availableSubscribers.addAll(entry.getValue());
+            for (MethodSubscriber foundedSubscriber : entry.getValue())
+                availableSubscribers.add(foundedSubscriber);
         }
     }
 
@@ -145,7 +147,7 @@ public final class EventBus {
         }
         Set<MethodSubscriber> blindEventSubscribers;
         if ((blindEventSubscribers = subscribersByEvent.get(BlindEvent.class)) != null) {
-            for (MethodSubscriber methodSubscriber: blindEventSubscribers)
+            for (MethodSubscriber methodSubscriber : blindEventSubscribers)
                 enqueueEvent(event, methodSubscriber);
         }
         processEvents();
@@ -187,7 +189,7 @@ public final class EventBus {
         return String.format("[EventBus |%s|]", mIdentification);
     }
 
-    private static class EventWithSubscriber {
+    private static final class EventWithSubscriber {
 
         private final Object mEvent;
 

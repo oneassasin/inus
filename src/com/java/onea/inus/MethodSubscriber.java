@@ -55,8 +55,8 @@ public final class MethodSubscriber {
             return false;
         if (this == o)
             return true;
-        if (this.getClass() == o.getClass())
-            return true;
+        if (this.getClass() != o.getClass())
+            return false;
         final MethodSubscriber methodSubscriber = (MethodSubscriber) o;
         return methodSubscriber.mMethod == this.mMethod
                 && methodSubscriber.mMethodInstance == this.mMethodInstance;
@@ -66,6 +66,5 @@ public final class MethodSubscriber {
     public String toString() {
         return String.format("[MethodSubscriber |%S|%S|]", mMethod, hash);
     }
-
 
 }
